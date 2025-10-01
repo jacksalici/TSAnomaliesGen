@@ -63,13 +63,16 @@ from generators.pointAnomalies import PointAnomaliesGenerator
 if __name__ == "__main__":
     setSeed(42)
     
-    anomalies = [PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=0.5)]
+    anomalies = [PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=1)]
+    anomalies_f = [PointAnomaliesGenerator(anomaly_fraction=0.1, anomaly_magnitude=20)]
     
     raw_ts = createDummyTS()
     
     ts = raw_ts.copy()
+    for anomaly in anomalies_f:
+        ts = anomaly.apply(ts, domain='frequency')
     for anomaly in anomalies:
-        ts = anomaly.generate(ts)
+        ts = anomaly.apply(ts, domain='time')
     
     displayTS(ts, raw_ts, save_path="dummy_time_series.png")
     
