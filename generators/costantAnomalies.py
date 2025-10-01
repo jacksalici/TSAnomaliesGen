@@ -3,7 +3,7 @@ import numpy as np
 
 
 class CostantAnomaliesGenerator(BaseGenerator):
-    def __init__(self, anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=3, anomaly_length_variance=1):
+    def __init__(self, anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=3, anomaly_length_variance=1, domain='time'):
         """
         Initialize the CostantAnomaliesGenerator.
         Parameters:
@@ -16,11 +16,15 @@ class CostantAnomaliesGenerator(BaseGenerator):
             Average number of consecutive points to be replaced with anomalies.
         anomaly_length_variance : int, default=1
             Variance in the number of consecutive points for anomalies.
+        domain : str, default='time'
+            Domain in which the generator operates ('time' or 'frequency').
         """
         self.anomaly_fraction = anomaly_fraction
         self.anomaly_value = anomaly_value
         self.anomaly_length = anomaly_length
         self.anomaly_length_variance = anomaly_length_variance
+        self.domain = domain
+        
     def generate(self, ts: np.ndarray) -> np.ndarray:
         """
         Generate constant value anomalies in the given time series.

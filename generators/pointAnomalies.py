@@ -3,7 +3,7 @@ import numpy as np
 
 
 class PointAnomaliesGenerator(BaseGenerator):
-    def __init__(self, anomaly_fraction=0.01, anomaly_magnitude=0.5):
+    def __init__(self, anomaly_fraction=0.01, anomaly_magnitude=0.5, domain='time'):
         """
         Initialize the PointAnomaliesGenerator.
 
@@ -13,9 +13,12 @@ class PointAnomaliesGenerator(BaseGenerator):
             Fraction of points in the time series to be replaced with anomalies.
         anomaly_magnitude : float, default=5.0
             Magnitude of the anomalies to be added.
+        domain : str, default='time'
+            Domain in which the generator operates ('time' or 'frequency').
         """
         self.anomaly_fraction = anomaly_fraction
         self.anomaly_magnitude = anomaly_magnitude
+        self.domain = domain
 
     def generate(self, ts: np.ndarray) -> np.ndarray:
         """

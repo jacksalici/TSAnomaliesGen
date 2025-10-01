@@ -64,23 +64,19 @@ from generators.costantAnomalies import CostantAnomaliesGenerator
 
 if __name__ == "__main__":
     setSeed(42)
-
+    
     anomalies = [
-        PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=1),
-        NormalNoiseGenerator(mean=0, std=0.1),
-        CostantAnomaliesGenerator(anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=5, anomaly_length_variance=2),
-    ]
-    anomalies_f = [
-        NormalNoiseGenerator(mean=0, std=0.1),
-        PointAnomaliesGenerator(anomaly_fraction=0.1, anomaly_magnitude=20),
+        PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=1, domain="time"),
+        NormalNoiseGenerator(mean=0, std=0.1, domain="time"),
+        CostantAnomaliesGenerator(anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=5, anomaly_length_variance=2, domain="time"),
+        NormalNoiseGenerator(mean=0, std=0.1, domain="frequency"),
+        PointAnomaliesGenerator(anomaly_fraction=0.1, anomaly_magnitude=20, domain="frequency"),
     ]
 
     raw_ts = createDummyTS()
 
     ts = raw_ts.copy()
-    for anomaly in anomalies_f:
-        ts = anomaly.apply(ts, domain="frequency")
     for anomaly in anomalies:
-        ts = anomaly.apply(ts, domain="time")
+        ts = anomaly.apply(ts)
 
     displayTS(ts, raw_ts, save_path="dummy_time_series.png")
