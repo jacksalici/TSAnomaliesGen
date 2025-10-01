@@ -47,7 +47,6 @@ def displayTS(ts: np.ndarray, raw_ts: np.ndarray = None, save_path: str = None):
         axes = [axes]  
 
     for i, ax in enumerate(axes):
-        # Plot processed ts
         if raw_ts is not None:
             ax.plot(raw_ts[:, i], label=f'Raw TS', color="#1f77b4", linewidth=3)
         ax.plot(ts[:, i], label=f'TS', color="#ff357c", linewidth=1)
