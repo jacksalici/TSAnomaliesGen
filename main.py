@@ -60,21 +60,27 @@ def createDummyTS(
 
 from generators.pointAnomalies import PointAnomaliesGenerator
 from generators.normalNoise import NormalNoiseGenerator
+from generators.costantAnomalies import CostantAnomaliesGenerator
 
 if __name__ == "__main__":
     setSeed(42)
-    
-    anomalies = [PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=1), NormalNoiseGenerator(mean=0, std=0.1)]
-    anomalies_f = [NormalNoiseGenerator(0.1, 0.2), PointAnomaliesGenerator(anomaly_fraction=0.1, anomaly_magnitude=20)]
-    
+
+    anomalies = [
+        PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=1),
+        NormalNoiseGenerator(mean=0, std=0.1),
+        CostantAnomaliesGenerator(anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=5, anomaly_length_variance=2),
+    ]
+    anomalies_f = [
+        NormalNoiseGenerator(mean=0, std=0.1),
+        PointAnomaliesGenerator(anomaly_fraction=0.1, anomaly_magnitude=20),
+    ]
+
     raw_ts = createDummyTS()
-    
+
     ts = raw_ts.copy()
     for anomaly in anomalies_f:
-        ts = anomaly.apply(ts, domain='frequency')
+        ts = anomaly.apply(ts, domain="frequency")
     for anomaly in anomalies:
-        ts = anomaly.apply(ts, domain='time')
-    
+        ts = anomaly.apply(ts, domain="time")
+
     displayTS(ts, raw_ts, save_path="dummy_time_series.png")
-    
-    
