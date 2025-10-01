@@ -11,38 +11,62 @@ def setSeed(seed: int):
     np.random.seed(seed)
     random.seed(seed)
 
-def displayTS(ts: np.ndarray, save_path: str = None):
+
+def displayTS(ts: np.ndarray, raw_ts: np.ndarray = None, save_path: str = None):
+    """
+    Display time series (ts) with optional raw time series (raw_ts).
+    
+    Args:
+        ts (np.ndarray): Processed time series (T x N).
+        raw_ts (np.ndarray, optional): Raw time series of same shape as ts.
+        save_path (str, optional): Path to save the figure.
+    """
     sns.set_style("whitegrid", {'grid.linestyle': '--'})
     rcParams['font.family'] = "DejaVu Sans"
     rcParams['axes.titlesize'] = 12
     rcParams['axes.labelsize'] = 10
-    rcParams['legend.fontsize'] = 8
-    rcParams['lines.linewidth'] = 3.0
+    rcParams['legend.fontsize'] = 9
 
     if ts.ndim == 1:
         ts = ts.reshape(-1, 1)
     num_variates = ts.shape[1]
-    
+
+    # If raw_ts is provided, validate shape
+    if raw_ts is not None:
+        if raw_ts.ndim == 1:
+            raw_ts = raw_ts.reshape(-1, 1)
+        assert raw_ts.shape == ts.shape, \
+            f"raw_ts must have the same shape as ts, got {raw_ts.shape} vs {ts.shape}"
+
     fig, axes = plt.subplots(
         num_variates, 1, figsize=(12, 2.5 * num_variates),
         sharex=True, constrained_layout=True
     )
-    
+
     if num_variates == 1:
         axes = [axes]  
-    
-    palette = sns.color_palette("husl", num_variates)
-    
+
+
     for i, ax in enumerate(axes):
-        ax.plot(ts[:, i], color=palette[i], label=f'Variate {i+1}', alpha=0.9)
-        ax.set_title(f'Variate {i+1}', fontsize=14)
-        ax.set_ylabel('Value', fontsize=12)
-        ax.legend(frameon=False, fancybox=False, shadow=False, loc="best")
-    
-    axes[-1].set_xlabel('Time Steps', fontsize=12)
+        # Plot processed ts
         
+
+        if raw_ts is not None:
+            ax.plot(raw_ts[:, i], label=f'Raw TS', color = "#1f77b4", linewidth=3)
+
+        
+        ax.plot(ts[:, i], label=f'TS', color = "#ff357c", linewidth=1)
+         # Plot raw ts if provided
+        
+        ax.set_title(f'Variate {i+1}', fontsize=14, weight="bold")
+        ax.set_ylabel('Value', fontsize=12)
+        ax.legend(frameon=True, loc="best")
+
+    axes[-1].set_xlabel('Time Steps', fontsize=12)
+
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches="tight")
     else:
         plt.show()
     plt.close()
+

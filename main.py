@@ -58,7 +58,19 @@ def createDummyTS(
     return np.array(data).T
 
 
+from generators.pointAnomalies import PointAnomaliesGenerator
+
 if __name__ == "__main__":
     setSeed(42)
-    ts_data = createDummyTS()
-    displayTS(ts_data, save_path="dummy_time_series.png")
+    
+    anomalies = [PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=0.5)]
+    
+    raw_ts = createDummyTS()
+    
+    ts = raw_ts.copy()
+    for anomaly in anomalies:
+        ts = anomaly.generate(ts)
+    
+    displayTS(ts, raw_ts, save_path="dummy_time_series.png")
+    
+    
