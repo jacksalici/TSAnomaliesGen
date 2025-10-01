@@ -56,10 +56,8 @@ def displayTS(ts: np.ndarray, raw_ts: np.ndarray = None, save_path: str = None):
 
     axes[-1].set_xlabel('Time Steps', fontsize=12)
 
-    # Add a single legend at the bottom
     handles, labels = axes[-1].get_legend_handles_labels()
     fig.legend(handles, labels, loc='lower right', ncol=2, frameon=False, fontsize=10)
-    fig.subplots_adjust(bottom=0.15)  # Adjust layout to make space for the legend
 
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches="tight")

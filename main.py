@@ -59,12 +59,13 @@ def createDummyTS(
 
 
 from generators.pointAnomalies import PointAnomaliesGenerator
+from generators.normalNoise import NormalNoiseGenerator
 
 if __name__ == "__main__":
     setSeed(42)
     
-    anomalies = [PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=1)]
-    anomalies_f = [PointAnomaliesGenerator(anomaly_fraction=0.1, anomaly_magnitude=20)]
+    anomalies = [PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=1), NormalNoiseGenerator(mean=0, std=0.1)]
+    anomalies_f = [NormalNoiseGenerator(0.1, 0.2), PointAnomaliesGenerator(anomaly_fraction=0.1, anomaly_magnitude=20)]
     
     raw_ts = createDummyTS()
     
