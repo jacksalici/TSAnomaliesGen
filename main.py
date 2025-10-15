@@ -62,6 +62,7 @@ from generators.pointAnomalies import PointAnomaliesGenerator
 from generators.normalNoise import NormalNoiseGenerator
 from generators.costantAnomalies import CostantAnomaliesGenerator
 from generators.sinusoid import SinusoidGenerator
+from generators.mask import MaskGenerator
 
 if __name__ == "__main__":
     setSeed(42)
@@ -76,11 +77,13 @@ if __name__ == "__main__":
         NormalNoiseGenerator(shape, mean=0, std=0.1, domain="frequency"),
         PointAnomaliesGenerator(shape, anomaly_fraction=0.1, anomaly_magnitude=20, domain="frequency"),
     ]
+    
+    masks = MaskGenerator(shape) 
 
     raw_ts = createDummyTS(shape[0], shape[1])
 
     ts = raw_ts.copy()
     for anomaly in anomalies:
-        ts = anomaly.apply(ts)
+        ts = anomaly.apply(ts, masks.generate())
 
     displayTS(ts, raw_ts, save_path="dummy_time_series.png")
