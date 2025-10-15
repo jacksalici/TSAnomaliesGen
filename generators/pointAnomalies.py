@@ -1,13 +1,15 @@
-from .base import BaseGenerator
+from .base import AdditiveGenerator
 import numpy as np
 
 
-class PointAnomaliesGenerator(BaseGenerator):
-    def __init__(self, anomaly_fraction=0.01, anomaly_magnitude=0.5, domain="time"):
+class PointAnomaliesGenerator(AdditiveGenerator):
+    def __init__(self, shape: tuple[int], anomaly_fraction=0.01, anomaly_magnitude=0.5, domain="time"):
         """
         Initialize the PointAnomaliesGenerator.
 
         Args:
+            shape: (seq_len, no_variates)
+                Shape of the time series data.
             anomaly_fraction : float, default=0.01
                 Fraction of points in the time series to be replaced with anomalies.
             anomaly_magnitude : float, default=5.0
@@ -18,22 +20,19 @@ class PointAnomaliesGenerator(BaseGenerator):
         self.anomaly_fraction = anomaly_fraction
         self.anomaly_magnitude = anomaly_magnitude
         self.domain = domain
+        super().__init__(shape, domain)
 
-    def generate(self, ts: np.ndarray) -> np.ndarray:
+    def generate(self, **params) -> np.ndarray:
         """
-        Generate point anomalies in the given time series.
-
-        Args:
-            ts : np.ndarray
-                Input time series data of shape (seq_len, no_variates).
+        Create a sparse additive component with point anomalies.
 
         Returns:
-            np.ndarray
-                Time series data with point anomalies added.
+            np.ndarray: Anomalies component to be added to the input.
         """
-        ts_with_anomalies = ts.copy()
-        seq_len, no_variates = ts.shape
+        seq_len, no_variates = self.base.shape
         num_anomalies = int(self.anomaly_fraction * seq_len * no_variates)
+
+        component = np.zeros((seq_len, no_variates), dtype=float)
 
         # Randomly select indices for anomalies
         anomaly_indices = np.random.choice(
@@ -43,9 +42,6 @@ class PointAnomaliesGenerator(BaseGenerator):
         for idx in anomaly_indices:
             i = idx // no_variates  # Time index
             j = idx % no_variates  # Variate index
-            # Add an anomaly by adding a large random value
-            ts_with_anomalies[i, j] += self.anomaly_magnitude * np.random.choice(
-                [-1, 1]
-            )
+            component[i, j] += self.anomaly_magnitude * np.random.choice([-1, 1])
 
-        return ts_with_anomalies
+        return component

@@ -1,13 +1,15 @@
 import numpy as np
-from .base import BaseGenerator
+from .base import AdditiveGenerator
 
 
-class NormalNoiseGenerator(BaseGenerator):
-    def __init__(self, mean=0.0, std=0.1, domain="time"):
+class NormalNoiseGenerator(AdditiveGenerator):
+    def __init__(self, shape: tuple[int], mean=0.0, std=0.1, domain="time"):
         """
         Initialize the NormalNoiseGenerator.
 
         Args:
+            shape: (seq_len, no_variates)
+                Shape of the time series data.
             mean : float, default=0.0
                 Mean of the Gaussian noise to be added.
             std : float, default=0.1
@@ -18,18 +20,14 @@ class NormalNoiseGenerator(BaseGenerator):
         self.mean = mean
         self.std = std
         self.domain = domain
+        super().__init__(shape, domain)
 
-    def generate(self, ts: np.ndarray) -> np.ndarray:
+    def generate(self, **params) -> np.ndarray:
         """
-        Generate Gaussian noise and add it to the given time series.
-
-        Args:
-            ts : np.ndarray
-                Input time series data of shape (seq_len, no_variates).
+        Generate an additive Gaussian noise component.
 
         Returns:
-            np.ndarray
-                Time series data with added Gaussian noise.
+            np.ndarray: Noise component to be added to the input.
         """
-        noise = np.random.normal(self.mean, self.std, ts.shape)
-        return ts + noise
+        self.base += np.random.normal(self.mean, self.std, self.base.shape)
+        return self.base

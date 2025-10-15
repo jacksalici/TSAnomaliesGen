@@ -65,15 +65,17 @@ from generators.costantAnomalies import CostantAnomaliesGenerator
 if __name__ == "__main__":
     setSeed(42)
     
+    shape = (1000, 2)
+    
     anomalies = [
-        PointAnomaliesGenerator(anomaly_fraction=0.01, anomaly_magnitude=1, domain="time"),
-        NormalNoiseGenerator(mean=0, std=0.1, domain="time"),
-        CostantAnomaliesGenerator(anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=5, anomaly_length_variance=2, domain="time"),
-        NormalNoiseGenerator(mean=0, std=0.1, domain="frequency"),
-        PointAnomaliesGenerator(anomaly_fraction=0.1, anomaly_magnitude=20, domain="frequency"),
+        PointAnomaliesGenerator(shape, anomaly_fraction=0.01, anomaly_magnitude=1, domain="time"),
+        NormalNoiseGenerator(shape, mean=0, std=0.1, domain="time"),
+        CostantAnomaliesGenerator(shape, anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=5, anomaly_length_variance=2, domain="time"),
+        NormalNoiseGenerator(shape, mean=0, std=0.1, domain="frequency"),
+        PointAnomaliesGenerator(shape, anomaly_fraction=0.1, anomaly_magnitude=20, domain="frequency"),
     ]
 
-    raw_ts = createDummyTS()
+    raw_ts = createDummyTS(shape[0], shape[1])
 
     ts = raw_ts.copy()
     for anomaly in anomalies:

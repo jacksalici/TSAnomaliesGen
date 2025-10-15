@@ -1,10 +1,11 @@
-from .base import BaseGenerator
+from .base import AdditiveGenerator
 import numpy as np
 
 
-class CostantAnomaliesGenerator(BaseGenerator):
+class CostantAnomaliesGenerator(AdditiveGenerator):
     def __init__(
         self,
+        shape: tuple[int],
         anomaly_fraction=0.01,
         anomaly_value=1.0,
         anomaly_length=3,
@@ -14,6 +15,8 @@ class CostantAnomaliesGenerator(BaseGenerator):
         """
         Initialize the CostantAnomaliesGenerator.
         Args:
+            shape: (seq_len, no_variates)
+                Shape of the time series data.
             anomaly_fraction : float, default=0.01
                 Fraction of points in the time series to be replaced with anomalies.
             anomaly_value : float, default=1.0
@@ -30,36 +33,26 @@ class CostantAnomaliesGenerator(BaseGenerator):
         self.anomaly_length = anomaly_length
         self.anomaly_length_variance = anomaly_length_variance
         self.domain = domain
+        super().__init__(shape, domain)
 
-    def generate(self, ts: np.ndarray) -> np.ndarray:
+    def generate(self, **params) -> np.ndarray:
         """
-        Generate constant value anomalies in the given time series.
-        Args:
-            ts : np.ndarray
-                Input time series data of shape (seq_len, no_variates).
+        Generate an additive component with constant value anomaly segments.
+
         Returns:
-            np.ndarray
-                Time series data with constant value anomalies added.
+            np.ndarray: Component to be added to the input containing constant blocks.
         """
-        ts_with_anomalies = ts.copy()
-        seq_len, no_variates = ts.shape
+        seq_len, no_variates = self.base.shape
         num_anomalies = int(self.anomaly_fraction * seq_len * no_variates)
         # Randomly select starting indices for anomalies
-        anomaly_indices = np.random.choice(
-            seq_len * no_variates, num_anomalies, replace=False
-        )
+        anomaly_indices = np.random.choice(seq_len * no_variates, num_anomalies, replace=False)
         for idx in anomaly_indices:
             i = idx // no_variates  # Time index
             j = idx % no_variates  # Variate index
             # Determine the length of the anomaly
-            anomaly_len = max(
-                1,
-                int(
-                    np.random.normal(self.anomaly_length, self.anomaly_length_variance)
-                ),
-            )
+            anomaly_len = max(1, int(np.random.normal(self.anomaly_length, self.anomaly_length_variance)))
             # Add anomalies to consecutive points
             for k in range(anomaly_len):
                 if i + k < seq_len:  # Ensure we don't go out of bounds
-                    ts_with_anomalies[i + k, j] = self.anomaly_value
-        return ts_with_anomalies
+                    self.base[i + k, j] = self.anomaly_value
+        return self.base
