@@ -41,6 +41,15 @@ class BaseGenerator(ABC):
     @abstractmethod
     def generate(self) -> np.ndarray:
         raise NotImplementedError("Can't generate with base generator.")
+    
+    def get_base_ts(self)  -> np.ndarray:
+        match self.combine_mode:
+            case "add":
+                return np.zeros(self.shape)
+            case "mul":
+                return np.ones(self.shape)
+            case default:
+                raise ValueError("Combine Mode not accepted")
         
     def combine(self, ts: np.ndarray, generated_ts: np.ndarray):
         assert ts.shape == generated_ts.shape
