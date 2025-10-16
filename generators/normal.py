@@ -34,7 +34,4 @@ class NormalGenerator(BaseGenerator):
 
         noise = np.random.normal(self.mean, self.std, self.shape)
 
-        if self.combine_mode == "add":
-            noise = noise + self.get_base_ts()
-
         return noise

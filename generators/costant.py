@@ -66,5 +66,5 @@ class CostantGenerator(BaseGenerator):
             )
             for k in range(gen_len):
                 if i + k < self.seq_len:
-                    self.ts_with_anomalies[i + k, j] = self.gen_value if self.gen_value else np.random.random(1)
-        return self.ts_with_anomalies
+                    ts[i + k, j] = self.gen_value if self.gen_value else np.random.random(1)
+        return ts

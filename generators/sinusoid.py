@@ -12,7 +12,7 @@ class SinusoidGenerator(BaseGenerator):
         combine_mode: Literal["add", "mul"] | None = None,
         frequency: float | None =None,
         random_frequency:bool = True,
-        max_frequency: bool = True,
+        max_frequency: bool = 5,
         amplitude = 1.0,
         phase = 0.0,
         random_phase = True
@@ -57,13 +57,13 @@ class SinusoidGenerator(BaseGenerator):
         for i in range(no_variates):
             # Frequency for this variate
             freq = np.random.randint(1, self.max_frequency) if self.random_frequency else self.frequency
-
             # Phase shift (constant + small random if enabled)
             if self.random_phase:
                 self.phase += np.random.uniform(-1, 1)
 
             # Base sine wave
             signal = np.sin(freq * t + self.phase)
+            
 
             data.append(signal)
 

@@ -65,7 +65,7 @@ class BaseGenerator(ABC):
 
         if mask_ts is not None and ts.shape != mask_ts.shape:
             raise ValueError(
-                f"Shape mismatch in AdditiveGenerator.combine: ts{ts.shape}, component{component.shape}, mask{mask.shape}"
+                f"Shape mismatch in AdditiveGenerator.combine: ts{ts.shape}, component{generated_ts.shape}, mask{mask_ts.shape}"
             )
 
         match self.combine_mode:
@@ -76,11 +76,12 @@ class BaseGenerator(ABC):
 
             case "mul":
                 if mask_ts is not None:
-                    ts = ts + np.where(mask_ts, generated_ts, 1)
+                    ts = ts * np.where(mask_ts, generated_ts, 1)
                 ts = ts * generated_ts
 
         if self.combine_mode == "frequency":
             ts = np.fft.ifft(ts, axis=0).real
+
 
         return ts
 
@@ -98,6 +99,3 @@ class BaseGenerator(ABC):
 
         generated_ts = self.generate()
         return self.combine(ts, generated_ts, mask_ts)
-
-    def apply(**kwargs):
-        print("Warning, this method is deprecated and will be removed soon.")
