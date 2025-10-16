@@ -4,7 +4,8 @@ import numpy as np
 
 
 class BaseGenerator(ABC):
-    def __init__(self, shape: tuple[int] = None, 
+    def __init__(self, 
+                 shape: tuple[int] = None, 
                  ts: np.ndarray | None = None, 
                  combine_domain: Literal['time', 'frequency'] = None, 
                  combine_mode: Literal['add', 'mul'] | None = None):
