@@ -60,7 +60,7 @@ def createDummyTS(
 
 from generators.pointAnomalies import PointAnomaliesGenerator
 from generators.normalNoise import NormalNoiseGenerator
-from generators.costantAnomalies import CostantAnomaliesGenerator
+from generators.costant import CostantGenerator
 from generators.sinusoid import SinusoidGenerator
 from generators.mask import MaskGenerator
 
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         #SinusoidGenerator(shape, frequency=0.5, amplitude=0.5, phase=0, domain="time"),
         PointAnomaliesGenerator(shape, anomaly_fraction=0.01, anomaly_magnitude=1, domain="time"),
         NormalNoiseGenerator(mean=0, std=0.1, domain="time"),
-        CostantAnomaliesGenerator(anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=5, anomaly_length_variance=2, domain="time"),
+        CostantGenerator(anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=5, anomaly_length_variance=2, domain="time"),
         NormalNoiseGenerator(mean=0, std=0.1, domain="frequency"),
         PointAnomaliesGenerator(shape, anomaly_fraction=0.1, anomaly_magnitude=20, domain="frequency"),
     ]
