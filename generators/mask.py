@@ -32,8 +32,14 @@ class MaskGenerator(BaseGenerator):
 
     def generate(self) -> np.ndarray:
 
-        mask = np.random.rand(*self.shape)
-        for i in range(self.shape[0]): 
-            mask[i] = mask[i] < self.intra_variates_probability
-        mask = mask < self.inter_variates_probability
-        return mask.astype(np.bool)
+        l_mask = np.random.rand(*self.shape)
+        v_mask = np.random.rand(self.no_variates)
+        mask = np.ones(self.shape, dtype=np.bool)
+        
+        for i in range(self.seq_len):
+            mask[i] = l_mask[i] < self.intra_variates_probability  
+            for j in range(self.no_variates):
+                if mask[i][j]:
+                     mask[i][j] = v_mask[j] < self.inter_variates_probability
+            
+        return mask

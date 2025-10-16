@@ -8,26 +8,21 @@ from generators.sinusoid import SinusoidGenerator
 from generators.mask import MaskGenerator
 
 if __name__ == "__main__":
-    setSeed(21)
+    #setSeed(21)
     
-    shape = (1000, 2)
+    shape = (1000, 4)
     
-    
-    
-    anomalies = [
-        NormalGenerator(shape = shape, mean=0, std=0.1, combine_domain="time", combine_mode="add"),
-        CostantGenerator(shape = shape, gen_fraction=0.01, gen_value=1.2, gen_length=5, gen_length_variance=2, combine_domain="time", combine_mode="mul"),
-        NormalGenerator(shape = shape, mean=0, std=0.1, combine_domain="time", combine_mode="add"),
-        CostantGenerator(shape = shape, gen_fraction=0.01, gen_value=1.2, gen_length=5, gen_length_variance=2, combine_domain="time", combine_mode="mul"),
-        #NormalGenerator(shape = shape, mean=1, std=0.1, combine_domain="time", combine_mode="mul"),
+    generators = [
+        NormalGenerator(shape, mean=0, std=0.01, combine_domain="frequency", combine_mode="add"),
+        SinusoidGenerator(shape, amplitude=0.5, phase=np.pi, max_frequency=5, combine_domain = "time", combine_mode="add"),
+        #CostantGenerator(shape, gen_fraction=0.1, gen_value=2, gen_length=1, gen_length_variance=10, combine_domain="time", combine_mode="mul"),
+        #NormalGenerator(shape, mean=1, std=0.1, combine_domain="time", combine_mode="mul"),
     ]
     
-    
-    raw_ts = SinusoidGenerator(shape, amplitude=0.5, phase=np.pi, max_frequency=6).generate()
-
+    raw_ts = np.zeros(shape)
     ts = raw_ts.copy()
-    for anomaly in anomalies:
-        mask = MaskGenerator(shape).generate()
-        ts = anomaly.generate_and_combine(ts, mask)
+    for g in generators:
+        mask = MaskGenerator(shape, intra_variates_probability=0.2, inter_variates_probability=0.35).generate()
+        ts = g.generate_and_combine(ts, mask)
 
     displayTS(ts, raw_ts, save_path="dummy_time_series.png")

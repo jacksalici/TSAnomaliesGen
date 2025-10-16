@@ -57,31 +57,28 @@ class BaseGenerator(ABC):
         self, ts: np.ndarray, generated_ts: np.ndarray, mask_ts: np.ndarray = None
     ):
         assert ts.shape == generated_ts.shape
-
+        assert self.combine_mode and self.combine_domain
+        if mask_ts is not None:
+            assert ts.shape == mask_ts.shape
+           
         if self.combine_domain == "frequency":
             ts = np.fft.fft(ts, axis=0)
-
-        assert self.combine_mode and self.combine_domain
-
-        if mask_ts is not None and ts.shape != mask_ts.shape:
-            raise ValueError(
-                f"Shape mismatch in AdditiveGenerator.combine: ts{ts.shape}, component{generated_ts.shape}, mask{mask_ts.shape}"
-            )
 
         match self.combine_mode:
             case "add":
                 if mask_ts is not None:
-                    ts = ts + np.where(mask_ts, generated_ts, 0)
-                ts = ts + generated_ts
+                    ts = np.where(mask_ts, ts + generated_ts, ts)
+                else:
+                    ts = ts + generated_ts
 
             case "mul":
                 if mask_ts is not None:
-                    ts = ts * np.where(mask_ts, generated_ts, 1)
-                ts = ts * generated_ts
+                    ts = np.where(mask_ts, ts * generated_ts, ts)
+                else:
+                    ts = ts * generated_ts
 
         if self.combine_mode == "frequency":
             ts = np.fft.ifft(ts, axis=0).real
-
 
         return ts
 

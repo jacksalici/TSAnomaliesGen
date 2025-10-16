@@ -62,7 +62,7 @@ class SinusoidGenerator(BaseGenerator):
                 self.phase += np.random.uniform(-1, 1)
 
             # Base sine wave
-            signal = np.sin(freq * t + self.phase)
+            signal = self.amplitude * np.sin(freq * t + self.phase)
             
 
             data.append(signal)
