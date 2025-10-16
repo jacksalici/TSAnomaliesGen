@@ -1,33 +1,38 @@
 import numpy as np
-from .base import AdditiveGenerator
+from .base import BaseGenerator
 
 
-class NormalNoiseGenerator(AdditiveGenerator):
-    def __init__(self, shape: tuple[int], mean=0.0, std=0.1, domain="time"):
+class NormalNoiseGenerator(BaseGenerator):
+    def __init__(self, mean=0.0, std=0.1, domain: str = 'time'):
         """
         Initialize the NormalNoiseGenerator.
 
-        Args:
-            shape: (seq_len, no_variates)
-                Shape of the time series data.
-            mean : float, default=0.0
-                Mean of the Gaussian noise to be added.
-            std : float, default=0.1
-                Standard deviation of the Gaussian noise to be added.
-            domain : str, default='time'
-                Domain in which the generator operates ('time' or 'frequency').
+        Parameters:
+        ----------
+        mean : float, default=0.0
+            Mean of the Gaussian noise to be added.
+        std : float, default=0.1
+            Standard deviation of the Gaussian noise to be added.
+        domain : str, default='time'
+            Domain in which the generator operates ('time' or 'frequency').
         """
+        super().__init__(domain)
         self.mean = mean
         self.std = std
-        self.domain = domain
-        super().__init__(shape, domain)
 
-    def generate(self, **params) -> np.ndarray:
+    def generate(self, ts: np.ndarray, params = None) -> np.ndarray:
         """
-        Generate an additive Gaussian noise component.
+        Generate Gaussian noise and add it to the given time series.
+
+        Parameters:
+        ----------
+        ts : np.ndarray
+            Input time series data of shape (seq_len, no_variates).
 
         Returns:
-            np.ndarray: Noise component to be added to the input.
+        -------
+        np.ndarray
+            Time series data with added Gaussian noise.
         """
-        self.base += np.random.normal(self.mean, self.std, self.base.shape)
-        return self.base
+        noise = np.random.normal(self.mean, self.std, ts.shape)
+        return ts + noise

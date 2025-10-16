@@ -70,11 +70,11 @@ if __name__ == "__main__":
     shape = (1000, 2)
     
     anomalies = [
-        SinusoidGenerator(shape, frequency=5, amplitude=0.5, phase=0, domain="time"),
+        #SinusoidGenerator(shape, frequency=0.5, amplitude=0.5, phase=0, domain="time"),
         PointAnomaliesGenerator(shape, anomaly_fraction=0.01, anomaly_magnitude=1, domain="time"),
-        NormalNoiseGenerator(shape, mean=0, std=0.1, domain="time"),
-        CostantAnomaliesGenerator(shape, anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=5, anomaly_length_variance=2, domain="time"),
-        NormalNoiseGenerator(shape, mean=0, std=0.1, domain="frequency"),
+        NormalNoiseGenerator(mean=0, std=0.1, domain="time"),
+        CostantAnomaliesGenerator(anomaly_fraction=0.01, anomaly_value=1.0, anomaly_length=5, anomaly_length_variance=2, domain="time"),
+        NormalNoiseGenerator(mean=0, std=0.1, domain="frequency"),
         PointAnomaliesGenerator(shape, anomaly_fraction=0.1, anomaly_magnitude=20, domain="frequency"),
     ]
     

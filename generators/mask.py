@@ -5,15 +5,15 @@ from .base import BaseGenerator
 
 class MaskGenerator(BaseGenerator):
     """Generator that creates a mask to be applied to the input series."""
-    def __init__(self, shape: list[int]):
+    def __init__(self, shape: list[int], domain: str = 'time'):
         """
         Initialize the MaskGenerator.
 
         Args:
             shape (list[int]): Shape of the mask to be generated.
-            domain (Literal["time", "frequency"] | None): Domain in which this generator operates.
+            domain (str): Domain in which this generator operates ('time' or 'frequency').
         """
-        super().__init__(None)
+        super().__init__(domain)
         self.shape = shape
 
     def generate(self, inter_variates_probability = 0.5, intra_variates_probability = 0.5, **params) -> np.ndarray:

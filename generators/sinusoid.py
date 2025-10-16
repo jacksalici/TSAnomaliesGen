@@ -19,13 +19,12 @@ class SinusoidGenerator(AdditiveGenerator):
             domain : str, default='time'
                 Domain in which the generator operates ('time' or 'frequency').
         """
+        super().__init__(shape, domain)
         self.frequency = frequency
         self.amplitude = amplitude
         self.phase = phase
-        self.domain = domain
-        super().__init__(shape, domain)
 
-    def generate(self, **params) -> np.ndarray:
+    def generate(self, ts = None, params = None) -> np.ndarray:
         """
         Create a sinusoidal additive component.
 
