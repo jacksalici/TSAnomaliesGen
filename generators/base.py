@@ -4,11 +4,13 @@ import numpy as np
 
 
 class BaseGenerator(ABC):
-    def __init__(self, 
-                 shape: tuple[int] = None, 
-                 ts: np.ndarray | None = None, 
-                 combine_domain: Literal['time', 'frequency'] = None, 
-                 combine_mode: Literal['add', 'mul'] | None = None):
+    def __init__(
+        self,
+        shape: tuple[int] = None,
+        ts: np.ndarray | None = None,
+        combine_domain: Literal["time", "frequency"] = None,
+        combine_mode: Literal["add", "mul"] | None = None,
+    ):
         """
         Initialize the BaseGenerator.
 
@@ -19,31 +21,30 @@ class BaseGenerator(ABC):
             combine_mode (str): Mode in which the combine operation happens when `apply` method is called ('add' or 'mul').
 
         """
-        
+
         assert shape != None or ts != None, "shape and ts can't be both None"
-        
+
         if shape is None:
             shape = ts.shape
-            
+
         self.shape = shape
         self.seq_len, self.no_variates = self.shape
-        
-        
-        if combine_domain and combine_domain not in ['time', 'frequency']:
+
+        if combine_domain and combine_domain not in ["time", "frequency"]:
             raise ValueError("Domain must be either 'time' or 'frequency'")
-        
+
         self.combine_domain = combine_domain
-        
-        if combine_mode and combine_mode not in ['add', 'mul']:
+
+        if combine_mode and combine_mode not in ["add", "mul"]:
             raise ValueError("Combine Mode not allowed")
-        
+
         self.combine_mode = combine_mode
-    
+
     @abstractmethod
     def generate(self) -> np.ndarray:
         raise NotImplementedError("Can't generate with base generator.")
-    
-    def get_base_ts(self)  -> np.ndarray:
+
+    def get_base_ts(self) -> np.ndarray:
         match self.combine_mode:
             case "add":
                 return np.zeros(self.shape)
@@ -51,41 +52,52 @@ class BaseGenerator(ABC):
                 return np.ones(self.shape)
             case default:
                 raise ValueError("Combine Mode not accepted")
-        
-    def combine(self, ts: np.ndarray, generated_ts: np.ndarray):
+
+    def combine(
+        self, ts: np.ndarray, generated_ts: np.ndarray, mask_ts: np.ndarray = None
+    ):
         assert ts.shape == generated_ts.shape
-        
-        if self.combine_domain == 'frequency':
+
+        if self.combine_domain == "frequency":
             ts = np.fft.fft(ts, axis=0)
-            
+
         assert self.combine_mode and self.combine_domain
-        
+
+        if mask_ts is not None and ts.shape != mask_ts.shape:
+            raise ValueError(
+                f"Shape mismatch in AdditiveGenerator.combine: ts{ts.shape}, component{component.shape}, mask{mask.shape}"
+            )
+
         match self.combine_mode:
             case "add":
+                if mask_ts is not None:
+                    ts = ts + np.where(mask_ts, generated_ts, 0)
                 ts = ts + generated_ts
 
             case "mul":
+                if mask_ts is not None:
+                    ts = ts + np.where(mask_ts, generated_ts, 1)
                 ts = ts * generated_ts
-        
-        if self.combine_mode == 'frequency':
+
+        if self.combine_mode == "frequency":
             ts = np.fft.ifft(ts, axis=0).real
-        
-        return ts    
-    
-    
-    def generate_and_combine(self, ts: np.ndarray) -> np.ndarray:
+
+        return ts
+
+    def generate_and_combine(
+        self, ts: np.ndarray, mask_ts: np.ndarray = None
+    ) -> np.ndarray:
         """
         Generate the TS and combine it to the input time series in the specified domain.
 
         Args:
             ts (np.ndarray): Input time series data.
+            mask_ts (np.ndarray): Optional boolean mask
+
         """
-        
+
         generated_ts = self.generate()
-        return self.combine(ts, generated_ts)
-      
+        return self.combine(ts, generated_ts, mask_ts)
 
     def apply(**kwargs):
         print("Warning, this method is deprecated and will be removed soon.")
-
-    
