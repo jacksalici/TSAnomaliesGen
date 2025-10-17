@@ -6,7 +6,7 @@ import numpy as np
 class Maybe():
     generator: BaseGenerator
     mask: BaseGenerator = None
-    probability: float = 1.0
+    probability: float = 1.0 #still not used
     
 
 class Some():
