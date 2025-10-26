@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from .base import BaseGenerator
 import numpy as np
+import random
 
 @dataclass
 class Maybe():
@@ -11,9 +12,12 @@ class Maybe():
 
 class Some():
     """Apply only SOME of generators"""
-    def __init__(self, generators: list[Maybe]):
+    def __init__(self, generators: list[Maybe], shuffle = False):
         self.generators = generators
         self._r = np.random.rand(len(generators))
+        
+        if shuffle:
+            random.shuffle(self.generators)
     
     def generate_and_combine(self, first_ts: np.ndarray):
         ts = first_ts.copy()

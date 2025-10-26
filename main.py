@@ -65,7 +65,8 @@ if __name__ == "__main__":
                 ),
                 probability=1,
             ),
-        ]
+        ],
+        shuffle=True
     )
 
     ts = some.generate_and_combine(raw_ts)
