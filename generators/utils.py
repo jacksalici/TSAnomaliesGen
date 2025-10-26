@@ -6,19 +6,24 @@ import numpy as np
 class Maybe():
     generator: BaseGenerator
     mask: BaseGenerator = None
-    probability: float = 1.0 #still not used
+    probability: float = 0.5
     
 
 class Some():
     """Apply only SOME of generators"""
     def __init__(self, generators: list[Maybe]):
         self.generators = generators
+        self._r = np.random.rand(len(generators))
     
     def generate_and_combine(self, first_ts: np.ndarray):
         ts = first_ts.copy()
-        for elem in self.generators:
+        for index, elem in enumerate(self.generators):
+            if elem.probability < self._r[index]:
+                print(f"Skipped {elem} (index: {index}) due to `some` probability.")
+                continue
             ts = elem.generator.generate_and_combine(ts, elem.mask.generate())
-        
+            print(f"Applied {elem} (index: {index}).")
+
         return ts
         
     
