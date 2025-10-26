@@ -96,3 +96,6 @@ class BaseGenerator(ABC):
 
         generated_ts = self.generate()
         return self.combine(ts, generated_ts, mask_ts)
+    
+    def __str__(self):
+        return f"{self.__class__.__name__}({self.combine_domain}, {self.combine_mode})"

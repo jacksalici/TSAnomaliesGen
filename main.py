@@ -2,15 +2,20 @@ import numpy as np
 from utils import displayTS, setSeed
 from generators.utils import Maybe, Some
 
+# Import all generators
 from generators.normal import NormalGenerator
 from generators.costant import CostantGenerator
 from generators.sinusoid import SinusoidGenerator
 from generators.mask import MaskGenerator
-
 from generators.drift import DriftGenerator
+from generators.exponential import ExponentialGenerator
+from generators.gamma import GammaGenerator
+from generators.laplace import LaplaceGenerator
+from generators.poisson import PoissonGenerator
+from generators.pink_noise import PinkNoiseGenerator
 
 if __name__ == "__main__":
-    setSeed(21)
+    #setSeed(21)
 
     shape = (1000, 4)
 
@@ -30,20 +35,56 @@ if __name__ == "__main__":
                 probability=1,
             ),
             Maybe(
-                NormalGenerator(
-                    shape, mean=0, std=0.2, combine_domain="time", combine_mode="add"
+                LaplaceGenerator(
+                    shape, loc=0, scale=0.05, combine_domain="time", combine_mode="add"
                 ),
                 MaskGenerator(
-                    shape, intra_variates_probability=0.2, inter_variates_probability=1
+                    shape, intra_variates_probability=0.3, inter_variates_probability=0.5
+                ),
+                probability=0.7,
+            ),
+            Maybe(
+                ExponentialGenerator(
+                    shape, scale=0.02, combine_domain="time", combine_mode="add"
+                ),
+                MaskGenerator(
+                    shape, intra_variates_probability=0.2, inter_variates_probability=0.25
                 ),
                 probability=0.5,
+            ),
+            Maybe(
+                GammaGenerator(
+                    shape, shape_param=2.0, scale=0.01, combine_domain="time", combine_mode="add"
+                ),
+                MaskGenerator(
+                    shape, intra_variates_probability=0.15, inter_variates_probability=0.25
+                ),
+                probability=0.4,
+            ),
+            Maybe(
+                PoissonGenerator(
+                    shape, lam=0.5, combine_domain="time", combine_mode="add"
+                ),
+                MaskGenerator(
+                    shape, intra_variates_probability=0.1, inter_variates_probability=0.5
+                ),
+                probability=0.3,
+            ),
+            Maybe(
+                PinkNoiseGenerator(
+                    shape, alpha=1.0, amplitude=0.1, combine_domain="time", combine_mode="add"
+                ),
+                MaskGenerator(
+                    shape, intra_variates_probability=0.4, inter_variates_probability=0.5
+                ),
+                probability=0.6,
             ),
             Maybe(
                 SinusoidGenerator(
                     shape,
                     amplitude=0.1,
                     phase=2 * np.pi,
-                    max_frequency=5,
+                    max_frequency=7,
                     combine_domain="time",
                     combine_mode="add",
                 ),
@@ -53,22 +94,49 @@ if __name__ == "__main__":
                 probability=1,
             ),
             Maybe(
-                DriftGenerator(
+                CostantGenerator(
                     shape,
-                    drift_type="exponential",
-                    drift_rate_range=(0.05, 1),
+                    gen_fraction=0.02,
+                    gen_value=0.01,
+                    gen_length=5,
+                    gen_length_variance=2,
                     combine_domain="time",
                     combine_mode="add",
                 ),
                 MaskGenerator(
-                    shape, intra_variates_probability=1, inter_variates_probability=1
+                    shape, intra_variates_probability=0.05, inter_variates_probability=0.5
                 ),
-                probability=1,
+                probability=0.3,
+            ),
+            Maybe(
+                DriftGenerator(
+                    shape,
+                    drift_type="exponential",
+                    drift_rate=0.01,
+                    random_drift=True,
+                    drift_rate_range=(0.005, 0.02),
+                    combine_domain="time",
+                    combine_mode="add",
+                ),
+                MaskGenerator(
+                    shape, intra_variates_probability=1, inter_variates_probability=0.25
+                ),
+                probability=0.5,
             ),
         ],
-        shuffle=True
+        shuffle=True,
+        max_generators = 5,
+        
     )
 
+    # Generate combined time series with all anomalies
     ts = some.generate_and_combine(raw_ts)
 
+    # Display and save
     displayTS(ts, raw_ts, save_path="dummy_time_series.png")
+    
+    print("\n✓ All generators tested successfully!")
+    print(f"  - Raw TS shape: {raw_ts.shape}")
+    print(f"  - Final TS shape: {ts.shape}")
+    print(f"  - Number of generators tested: 11")
+    print(f"  - Output saved to: dummy_time_series.png")
