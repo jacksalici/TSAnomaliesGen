@@ -12,12 +12,25 @@ class Maybe():
 
 class Some():
     """Apply only SOME of generators"""
-    def __init__(self, generators: list[Maybe], shuffle = False):
+    def __init__(self, generators: list[Maybe], shuffle = False, max_generators = None):
+        """
+        Initialize the Some generator.
+        
+        Args:
+            generators (list[Maybe]): List of Maybe generator objects.
+            shuffle (bool): Whether to shuffle the order of generators before applying.
+            max_generators (int | None): Maximum number of generators to apply. If None, apply all.
+        """
+        
+        
         self.generators = generators
         self._r = np.random.rand(len(generators))
         
         if shuffle:
             random.shuffle(self.generators)
+            
+        if max_generators is not None:
+            self.generators = self.generators[:max_generators]
     
     def generate_and_combine(self, first_ts: np.ndarray):
         ts = first_ts.copy()
