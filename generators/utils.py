@@ -9,6 +9,9 @@ class Maybe():
     mask: BaseGenerator = None
     probability: float = 0.5
     
+    def __str__(self):
+        return f"Generator {self.generator} with p={self.probability})"
+    
 
 class Some():
     """Apply only SOME of generators"""
@@ -36,7 +39,7 @@ class Some():
         ts = first_ts.copy()
         for index, elem in enumerate(self.generators):
             if elem.probability < self._r[index]:
-                print(f"Skipped {elem} (index: {index}) due to `some` probability.")
+                print(f"Skipped {elem} (index: {index}).")
                 continue
             ts = elem.generator.generate_and_combine(ts, elem.mask.generate())
             print(f"Applied {elem} (index: {index}).")

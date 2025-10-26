@@ -129,14 +129,7 @@ if __name__ == "__main__":
         
     )
 
-    # Generate combined time series with all anomalies
     ts = some.generate_and_combine(raw_ts)
 
-    # Display and save
     displayTS(ts, raw_ts, save_path="dummy_time_series.png")
-    
-    print("\n✓ All generators tested successfully!")
-    print(f"  - Raw TS shape: {raw_ts.shape}")
-    print(f"  - Final TS shape: {ts.shape}")
-    print(f"  - Number of generators tested: 11")
-    print(f"  - Output saved to: dummy_time_series.png")
+
