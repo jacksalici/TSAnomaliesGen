@@ -67,13 +67,13 @@ class BaseGenerator(ABC):
         match self.combine_mode:
             case "add":
                 if mask_ts is not None:
-                    ts = np.where(mask_ts, ts + generated_ts, ts)
+                    ts = ts + mask_ts * generated_ts
                 else:
                     ts = ts + generated_ts
 
             case "mul":
                 if mask_ts is not None:
-                    ts = np.where(mask_ts, ts * generated_ts, ts)
+                    ts = ts * mask_ts * generated_ts
                 else:
                     ts = ts * generated_ts
 

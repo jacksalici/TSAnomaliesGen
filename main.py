@@ -6,7 +6,7 @@ from generators.utils import Maybe, Some
 from generators.normal import NormalGenerator
 from generators.costant import CostantGenerator
 from generators.sinusoid import SinusoidGenerator
-from generators.mask import MaskGenerator
+from generators.mask_sigmoids import SigmoidMaskGenerator
 from generators.drift import DriftGenerator
 from generators.exponential import ExponentialGenerator
 from generators.gamma import GammaGenerator
@@ -22,6 +22,14 @@ if __name__ == "__main__":
     raw_ts = SinusoidGenerator(
         shape, amplitude=0.5, phase=np.pi, max_frequency=5
     ).generate()
+    
+    mask = SigmoidMaskGenerator(
+        shape,
+        num_peaks=4,
+        peak_length=100,
+        length_variance=50,
+        steepness=0.15
+    )
 
     some = Some(
         [
@@ -29,54 +37,42 @@ if __name__ == "__main__":
                 NormalGenerator(
                     shape, mean=0, std=0.01, combine_domain="time", combine_mode="add"
                 ),
-                MaskGenerator(
-                    shape, intra_variates_probability=1, inter_variates_probability=1
-                ),
+                mask,
                 probability=1,
             ),
             Maybe(
                 LaplaceGenerator(
                     shape, loc=0, scale=0.05, combine_domain="time", combine_mode="add"
                 ),
-                MaskGenerator(
-                    shape, intra_variates_probability=0.3, inter_variates_probability=0.5
-                ),
+                mask,
                 probability=0.7,
             ),
             Maybe(
                 ExponentialGenerator(
                     shape, scale=0.02, combine_domain="time", combine_mode="add"
                 ),
-                MaskGenerator(
-                    shape, intra_variates_probability=0.2, inter_variates_probability=0.25
-                ),
+                mask,
                 probability=0.5,
             ),
             Maybe(
                 GammaGenerator(
                     shape, shape_param=2.0, scale=0.01, combine_domain="time", combine_mode="add"
                 ),
-                MaskGenerator(
-                    shape, intra_variates_probability=0.15, inter_variates_probability=0.25
-                ),
+                mask,
                 probability=0.4,
             ),
             Maybe(
                 PoissonGenerator(
                     shape, lam=0.5, combine_domain="time", combine_mode="add"
                 ),
-                MaskGenerator(
-                    shape, intra_variates_probability=0.1, inter_variates_probability=0.5
-                ),
+                mask,
                 probability=0.3,
             ),
             Maybe(
                 PinkNoiseGenerator(
                     shape, alpha=1.0, amplitude=0.1, combine_domain="time", combine_mode="add"
                 ),
-                MaskGenerator(
-                    shape, intra_variates_probability=0.4, inter_variates_probability=0.5
-                ),
+                mask,
                 probability=0.6,
             ),
             Maybe(
@@ -88,9 +84,7 @@ if __name__ == "__main__":
                     combine_domain="time",
                     combine_mode="add",
                 ),
-                MaskGenerator(
-                    shape, intra_variates_probability=1, inter_variates_probability=1
-                ),
+                mask,
                 probability=1,
             ),
             Maybe(
@@ -103,9 +97,7 @@ if __name__ == "__main__":
                     combine_domain="time",
                     combine_mode="add",
                 ),
-                MaskGenerator(
-                    shape, intra_variates_probability=0.05, inter_variates_probability=0.5
-                ),
+                mask,
                 probability=0.3,
             ),
             Maybe(
@@ -118,9 +110,7 @@ if __name__ == "__main__":
                     combine_domain="time",
                     combine_mode="add",
                 ),
-                MaskGenerator(
-                    shape, intra_variates_probability=1, inter_variates_probability=0.25
-                ),
+                mask,
                 probability=0.5,
             ),
         ],
