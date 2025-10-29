@@ -33,10 +33,10 @@ raw_ts = SinusoidGenerator(
     
 
 # Combine anomalies with specified probabilities
-Some(
+Some([
     Maybe(normal_gen, probability=0.5),
     Maybe(drift_gen, probability=0.3)
-).generate_and_combine(raw_ts)
+    ]).generate_and_combine(raw_ts)
 
 ```
 

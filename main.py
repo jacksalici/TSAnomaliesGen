@@ -29,8 +29,8 @@ if __name__ == "__main__":
         peak_length=100,
         length_variance=50,
         steepness=0.15
-    )
-
+    ).generate()
+    
     some = Some(
         [
             Maybe(
@@ -121,5 +121,5 @@ if __name__ == "__main__":
 
     ts = some.generate_and_combine(raw_ts)
 
-    displayTS(ts, raw_ts, save_path="dummy_time_series.png")
+    displayTS(ts, raw_ts, mask, save_path="dummy_time_series.png")
 

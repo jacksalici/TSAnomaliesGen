@@ -12,7 +12,7 @@ def setSeed(seed: int):
     random.seed(seed)
 
 
-def displayTS(ts: np.ndarray, raw_ts: np.ndarray = None, save_path: str = None):
+def displayTS(ts: np.ndarray, raw_ts: np.ndarray = None,  mask_ts: np.ndarray = None, save_path: str = None):
     """
     Display time series (ts) with optional raw time series (raw_ts).
     
@@ -37,6 +37,12 @@ def displayTS(ts: np.ndarray, raw_ts: np.ndarray = None, save_path: str = None):
             raw_ts = raw_ts.reshape(-1, 1)
         assert raw_ts.shape == ts.shape, \
             f"raw_ts must have the same shape as ts, got {raw_ts.shape} vs {ts.shape}"
+    
+    if mask_ts is not None:
+        if mask_ts.ndim == 1:
+            mask_ts = mask_ts.reshape(-1, 1)
+        assert mask_ts.shape == ts.shape, \
+            f"mask_ts must have the same shape as ts, got {mask_ts.shape}"
 
     fig, axes = plt.subplots(
         num_variates, 1, figsize=(12, 2.5 * num_variates),
@@ -49,6 +55,8 @@ def displayTS(ts: np.ndarray, raw_ts: np.ndarray = None, save_path: str = None):
     for i, ax in enumerate(axes):
         if raw_ts is not None:
             ax.plot(raw_ts[:, i], label=f'Raw TS', color="#1f77b4", linewidth=3)
+        if mask_ts is not None:
+            ax.plot(mask_ts[:, i] * np.max(ts[:, i]), label=f'Mask TS', color="#ff7f0e", linewidth=1)
         ax.plot(ts[:, i], label=f'TS', color="#ff357c", linewidth=1)
         ax.set_title(f'Variate {i+1}', fontsize=14)
         ax.set_ylabel('Value', fontsize=12)

@@ -41,7 +41,7 @@ class Some():
             if elem.probability < self._r[index]:
                 print(f"Skipped {elem} (index: {index}).")
                 continue
-            ts = elem.generator.generate_and_combine(ts, elem.mask.generate())
+            ts = elem.generator.generate_and_combine(ts, elem.mask)
             print(f"Applied {elem} (index: {index}).")
 
         return ts
