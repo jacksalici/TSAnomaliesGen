@@ -35,3 +35,13 @@ class GammaGenerator(BaseGenerator):
         noise = np.random.gamma(self.shape_param, self.scale, self.shape)
 
         return noise
+
+
+if __name__ == "__main__":
+    generator = GammaGenerator(
+        shape=(500, 3),
+        shape_param=2.0,
+        scale=1.0
+    )
+    
+    generator.test()

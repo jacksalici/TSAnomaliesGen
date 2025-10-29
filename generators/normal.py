@@ -35,3 +35,13 @@ class NormalGenerator(BaseGenerator):
         noise = np.random.normal(self.mean, self.std, self.shape)
 
         return noise
+
+
+if __name__ == "__main__":
+    generator = NormalGenerator(
+        shape=(500, 3),
+        mean=0.0,
+        std=0.5
+    )
+    
+    generator.test()

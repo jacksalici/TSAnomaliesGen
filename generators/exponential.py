@@ -31,3 +31,12 @@ class ExponentialGenerator(BaseGenerator):
         noise = np.random.exponential(self.scale, self.shape)
 
         return noise
+
+
+if __name__ == "__main__":
+    generator = ExponentialGenerator(
+        shape=(500, 3),
+        scale=1.0
+    )
+    
+    generator.test()

@@ -31,3 +31,12 @@ class PoissonGenerator(BaseGenerator):
         noise = np.random.poisson(self.lam, self.shape).astype(float)
 
         return noise
+
+
+if __name__ == "__main__":
+    generator = PoissonGenerator(
+        shape=(500, 3),
+        lam=3.0
+    )
+    
+    generator.test()

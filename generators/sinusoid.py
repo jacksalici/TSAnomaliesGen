@@ -68,3 +68,16 @@ class SinusoidGenerator(BaseGenerator):
             data.append(signal)
 
         return np.array(data).T
+
+
+if __name__ == "__main__":
+    generator = SinusoidGenerator(
+        shape=(500, 3),
+        frequency=2.0,
+        random_frequency=True,
+        max_frequency=5,
+        amplitude=1.0,
+        random_phase=True
+    )
+    
+    generator.test()

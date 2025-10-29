@@ -78,3 +78,15 @@ class MaskGenerator(BaseGenerator):
                         i += 1
             
         return mask
+
+
+if __name__ == "__main__":
+    generator = MaskGenerator(
+        shape=(500, 3),
+        inter_variates_probability=0.5,
+        intra_variates_probability=0.3,
+        cluster_size=10,
+        cluster_variance=3
+    )
+    
+    generator.test()

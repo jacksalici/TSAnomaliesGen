@@ -59,3 +59,13 @@ class PinkNoiseGenerator(BaseGenerator):
             noise[:, variate] = pink
         
         return noise
+
+
+if __name__ == "__main__":
+    generator = PinkNoiseGenerator(
+        shape=(500, 3),
+        alpha=1.0,
+        amplitude=50.0
+    )
+    
+    generator.test()

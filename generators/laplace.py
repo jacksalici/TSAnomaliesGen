@@ -35,3 +35,13 @@ class LaplaceGenerator(BaseGenerator):
         noise = np.random.laplace(self.loc, self.scale, self.shape)
 
         return noise
+
+
+if __name__ == "__main__":
+    generator = LaplaceGenerator(
+        shape=(500, 3),
+        loc=0.0,
+        scale=1.0
+    )
+    
+    generator.test()

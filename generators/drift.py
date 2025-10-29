@@ -8,8 +8,8 @@ class DriftGenerator(BaseGenerator):
         self,
         shape: tuple[int] = None,
         ts: np.ndarray | None = None,
-        combine_domain: Literal["time", "frequency"] = None,
-        combine_mode: Literal["add", "mul"] | None = None,
+        combine_domain: Literal["time", "frequency"] = "time",
+        combine_mode: Literal["add", "mul"] | None = "add",
         drift_type: Literal["linear", "exponential", "polynomial"] = "linear",
         drift_rate=0.01,
         polynomial_degree=2,
@@ -73,3 +73,14 @@ class DriftGenerator(BaseGenerator):
             ts[:, variate] = drift
             
         return ts
+
+
+if __name__ == "__main__":
+    generator = DriftGenerator(
+        shape=(500, 3),
+        drift_type="linear",
+        drift_rate=0.01,
+        random_drift=False
+    )
+    
+    generator.test()
