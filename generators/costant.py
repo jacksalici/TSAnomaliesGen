@@ -8,8 +8,8 @@ class CostantGenerator(BaseGenerator):
         self,
         shape: tuple[int] = None,
         ts: np.ndarray | None = None,
-        combine_domain: Literal["time", "frequency"] = None,
-        combine_mode: Literal["add", "mul"] | None = None,
+        combine_domain: Literal["time", "frequency"] = "time",
+        combine_mode: Literal["add", "mul"] | None = "add",
         gen_fraction=0.01,
         gen_value: float | None = 1.0,
         gen_length=3,
@@ -64,7 +64,21 @@ class CostantGenerator(BaseGenerator):
                     np.random.normal(self.gen_length, self.gen_length_variance)
                 ),
             )
+            
+            cur_value = self.gen_value if self.gen_value else np.random.random(1)
             for k in range(gen_len):
                 if i + k < self.seq_len:
-                    ts[i + k, j] = self.gen_value if self.gen_value else np.random.random(1)
+                    ts[i + k, j] = cur_value
         return ts
+
+
+if __name__ == "__main__":
+    generator = CostantGenerator(
+        shape=(500, 1),
+        gen_fraction=0.05,
+        gen_value=None,
+        gen_length=10,
+        gen_length_variance=2
+    )
+    
+    generator.test()
