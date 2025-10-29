@@ -99,3 +99,15 @@ class BaseGenerator(ABC):
     
     def __str__(self):
         return f"{self.__class__.__name__}({self.combine_domain}, {self.combine_mode})"
+    
+    
+    def test(self):
+        print(f"{self.__class__} test method called")
+        
+        import matplotlib.pyplot as plt
+        ts = self.generate()
+        for i in range(ts.shape[1]):
+            plt.plot(ts[:, i], label=f'Variate {i}')
+        plt.show()
+        
+        
